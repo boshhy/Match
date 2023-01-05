@@ -211,7 +211,6 @@ function PlayState:calculateMatches()
         -- the new upper gaps that exist
         Timer.tween(0.25, tilesToFall):finish(function()
             
-            
             -- recursively call function in case new matches have been created
             -- as a result of falling blocks once new blocks have finished falling
             self:calculateMatches()
