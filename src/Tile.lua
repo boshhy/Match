@@ -26,6 +26,16 @@ function Tile:init(x, y, color, variety)
     -- tile appearance/points
     self.color = color
     self.variety = variety
+    
+    -- shiny variation of the tile
+    self.shiny = math.random(8) == 1 and true or false
+    self.shinybool = self.shiny
+
+    Timer.every(0.25, function()
+        if self.shinybool then
+            self.shiny = not self.shiny
+        end
+    end)
 end
 
 function Tile:render(x, y)
@@ -38,5 +48,17 @@ function Tile:render(x, y)
     -- draw tile itself
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
-        self.x + x, self.y + y)
+        self.x + x, self.y + y) 
+
+    if self.shinybool then
+        love.graphics.setColor(174/255,187/255,255/255,1)
+        love.graphics.ellipse('fill', self.x + 24 + x, self.y + 8 + y, 1,4)
+        love.graphics.ellipse('fill', self.x + 24 + x, self.y + 8 + y, 4,1) 
+    end
+
+    if self.shiny then
+        love.graphics.setColor(174/255,187/255,255/255,1)
+        love.graphics.ellipse('fill', self.x + 24 + x, self.y + 8 + y, 1,5)
+        love.graphics.ellipse('fill', self.x + 24 + x, self.y + 8 + y, 5,1)  
+    end
 end
