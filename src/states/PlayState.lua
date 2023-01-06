@@ -168,7 +168,10 @@ function PlayState:update(dt)
                 
                 -- once the swap is finished, we can tween falling blocks as needed
                 :finish(function()
-                    self:calculateMatches()
+                    if not self:calculateMatches() then
+                        --TODO if no matches switch back the tiles
+                        gSounds['error']:play()
+                    end
                 end)
             end
         end
@@ -215,10 +218,11 @@ function PlayState:calculateMatches()
             -- as a result of falling blocks once new blocks have finished falling
             self:calculateMatches()
         end)
-    
+        return true
     -- if no matches, we can continue playing
     else
         self.canInput = true
+        return false
     end
 end
 
