@@ -33,7 +33,7 @@ function Board:initializeTiles()
         for tileX = 1, 8 do
             
             -- create a new tile at X,Y with a random color and variety
-            table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(math.min(self.level, 6))))
+            table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(8), math.random(math.min(self.level, 6))))
         end
     end
 
@@ -268,7 +268,7 @@ function Board:getFallingTiles()
             if not tile then
 
                 -- new tile with random color and variety
-                local tile = Tile(x, y, math.random(18), math.random(math.min(self.level, 6)))
+                local tile = Tile(x, y, math.random(8), math.random(math.min(self.level, 6)))
                 tile.y = -32
                 self.tiles[y][x] = tile
 
@@ -289,4 +289,10 @@ function Board:render()
             self.tiles[y][x]:render(self.x, self.y)
         end
     end
+end
+
+
+function Board:availableMoves()
+    -- TODO implement board reset when no matches found
+    return true
 end

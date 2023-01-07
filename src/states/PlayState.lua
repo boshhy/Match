@@ -238,6 +238,12 @@ function PlayState:calculateMatches()
             -- recursively call function in case new matches have been created
             -- as a result of falling blocks once new blocks have finished falling
             self:calculateMatches()
+            Timer.after(0.25, function()
+                if not self.board:availableMoves() then
+                    self.timethefunctionwascalled = self.timethefunctionwascalled + 1
+                    self.board:initializeTiles()
+                end
+            end)
         end)
         return true
     -- if no matches, we can continue playing
