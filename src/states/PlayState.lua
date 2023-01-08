@@ -270,6 +270,9 @@ function PlayState:render()
 
     -- draw actual cursor rect
     love.graphics.setLineWidth(4)
+    --TODO add mouse functionality 
+    mouseX, mouseY = love.mouse.getPosition()
+    mouseX,mouseY = push:toGame(mouseX, mouseY)
     love.graphics.rectangle('line', self.boardHighlightX * 32 + (VIRTUAL_WIDTH - 272),
         self.boardHighlightY * 32 + 16, 32, 32, 4)
 
