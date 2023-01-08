@@ -149,18 +149,8 @@ function PlayState:update(dt)
 
                 local newTile = self.board.tiles[y][x]
                 local oldTile = self.board.tiles[tempY][tempX]
-                
 
-                self.highlightedTile.gridX = newTile.gridX
-                self.highlightedTile.gridY = newTile.gridY
-                newTile.gridX = tempX
-                newTile.gridY = tempY
-
-                -- swap tiles in the tiles table
-                self.board.tiles[self.highlightedTile.gridY][self.highlightedTile.gridX] =
-                    self.highlightedTile
-
-                self.board.tiles[newTile.gridY][newTile.gridX] = newTile
+                self.board:swap(oldTile, newTile)
                 
                 -- tween coordinates between the two so they swap
                 Timer.tween(0.1, {
@@ -174,19 +164,7 @@ function PlayState:update(dt)
                     -- if no matches switch back the tiles
                     if not self:calculateMatches() then
                         gSounds['error']:play()
-                        
-                        local tempX = newTile.gridX
-                        local tempY = newTile.gridY 
-
-                        newTile.gridX = oldTile.gridX
-                        newTile.gridY = oldTile.gridY
-
-                        oldTile.gridX = tempX
-                        oldTile.gridY = tempY
-
-                        self.board.tiles[oldTile.gridY][oldTile.gridX] = oldTile
-                        
-                        self.board.tiles[newTile.gridY][newTile.gridX] = newTile
+                        self.board:swap(oldTile, newTile)
 
                         Timer.tween(0.1, {
                             [oldTile] = {x = newTile.x, y = newTile.y},
@@ -240,7 +218,6 @@ function PlayState:calculateMatches()
             self:calculateMatches()
             Timer.after(0.25, function()
                 if not self.board:availableMoves() then
-                    self.timethefunctionwascalled = self.timethefunctionwascalled + 1
                     self.board:initializeTiles()
                 end
             end)

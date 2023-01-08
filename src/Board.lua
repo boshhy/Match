@@ -33,11 +33,11 @@ function Board:initializeTiles()
         for tileX = 1, 8 do
             
             -- create a new tile at X,Y with a random color and variety
-            table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(8), math.random(math.min(self.level, 6))))
+            table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(math.min(self.level, 6))))
         end
     end
 
-    while self:calculateMatches() do
+    while self:calculateMatches() or not self:availableMoves() do
         
         -- recursively initialize if matches were returned so we always have
         -- a matchless board on start
@@ -268,7 +268,7 @@ function Board:getFallingTiles()
             if not tile then
 
                 -- new tile with random color and variety
-                local tile = Tile(x, y, math.random(8), math.random(math.min(self.level, 6)))
+                local tile = Tile(x, y, math.random(18), math.random(math.min(self.level, 6)))
                 tile.y = -32
                 self.tiles[y][x] = tile
 
@@ -293,6 +293,56 @@ end
 
 
 function Board:availableMoves()
-    -- TODO implement board reset when no matches found
-    return true
+    for x = 1, 8 do
+        for y = 1, 8 do
+            currTile = self.tiles[y][x]
+
+            -- tile to left
+            if x <= 7 then
+                switchTile = self.tiles[y][x+1]
+                if self:matchOccursBetween(currTile, switchTile) then
+                    --currTile.variety = 3
+                    return true
+                end
+            end
+
+            if y <= 7 then
+                switchTile = self.tiles[y+1][x]
+                if self:matchOccursBetween(currTile, switchTile) then
+                    --currTile.variety = 5
+                    return true
+                end
+            end
+
+        end
+    end
+    return false
+end
+
+
+function Board:matchOccursBetween(tile1, tile2)
+    self:swap(tile1, tile2)
+
+    if self:calculateMatches() then
+        self:swap(tile1, tile2)
+        return true
+    end
+    
+    self:swap(currTile,switchTile)
+    return false
+end
+
+
+function Board:swap(tile1, tile2)
+    tempX = tile1.gridX
+    tempY = tile1.gridY
+
+    tile1.gridX = tile2.gridX
+    tile1.gridY = tile2.gridY
+
+    tile2.gridX = tempX
+    tile2.gridY = tempY
+
+    self.tiles[tile1.gridY][tile1.gridX] = tile1
+    self.tiles[tile2.gridY][tile2.gridX] = tile2
 end
