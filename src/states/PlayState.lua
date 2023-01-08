@@ -42,6 +42,9 @@ function PlayState:init()
     self.resetting = false
     self.resettingTimer = 3
 
+    self.oldmX = 0
+    self.oldmY = 0
+
     -- set our Timer class to turn cursor highlight on and off
     Timer.every(0.5, function()
         self.rectHighlighted = not self.rectHighlighted
@@ -109,23 +112,35 @@ function PlayState:update(dt)
     end
 
     if self.canInput then
-        -- move cursor around based on bounds of grid, playing sounds
-        if love.keyboard.wasPressed('up') then
-            self.boardHighlightY = math.max(0, self.boardHighlightY - 1)
-            gSounds['select']:play()
-        elseif love.keyboard.wasPressed('down') then
-            self.boardHighlightY = math.min(7, self.boardHighlightY + 1)
-            gSounds['select']:play()
-        elseif love.keyboard.wasPressed('left') then
-            self.boardHighlightX = math.max(0, self.boardHighlightX - 1)
-            gSounds['select']:play()
-        elseif love.keyboard.wasPressed('right') then
-            self.boardHighlightX = math.min(7, self.boardHighlightX + 1)
-            gSounds['select']:play()
+        if self:isMouseOnBoard() then
+            mX, mY = self:getMouseXY()
+            if oldmX ~= mX or oldmY ~= mY then
+                gSounds['select']:play()
+                oldmX = mX
+                oldmY = mY
+            end
+            self.boardHighlightX = mX
+            self.boardHighlightY = mY
+        else
+            -- move cursor around based on bounds of grid, playing sounds
+            if love.keyboard.wasPressed('up') then
+                self.boardHighlightY = math.max(0, self.boardHighlightY - 1)
+                gSounds['select']:play()
+            elseif love.keyboard.wasPressed('down') then
+                self.boardHighlightY = math.min(7, self.boardHighlightY + 1)
+                gSounds['select']:play()
+            elseif love.keyboard.wasPressed('left') then
+                self.boardHighlightX = math.max(0, self.boardHighlightX - 1)
+                gSounds['select']:play()
+            elseif love.keyboard.wasPressed('right') then
+                self.boardHighlightX = math.min(7, self.boardHighlightX + 1)
+                gSounds['select']:play()
+            end
         end
 
         -- if we've pressed enter, to select or deselect a tile...
-        if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+        --TODO fix mouse issue being down
+        if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return')  or love.mouse.isDown(1) and self:isMouseOnBoard() then
             
             -- if same tile as currently highlighted, deselect
             local x = self.boardHighlightX + 1
@@ -270,9 +285,6 @@ function PlayState:render()
 
     -- draw actual cursor rect
     love.graphics.setLineWidth(4)
-    --TODO add mouse functionality 
-    mouseX, mouseY = love.mouse.getPosition()
-    mouseX,mouseY = push:toGame(mouseX, mouseY)
     love.graphics.rectangle('line', self.boardHighlightX * 32 + (VIRTUAL_WIDTH - 272),
         self.boardHighlightY * 32 + 16, 32, 32, 4)
 
@@ -296,4 +308,30 @@ function PlayState:render()
         love.graphics.setColor(1,0,0,1)
         love.graphics.printf('' .. tostring(self.resettingTimer), 280, 178, 182, 'center')
     end
+end
+
+
+function PlayState:getMouseXY()
+    mouseX, mouseY = push:toGame(love.mouse.getPosition())
+    myX, myY = 0, 0
+    while mouseX > 240 do
+        myX = myX + 1
+        mouseX = mouseX - 32
+    end
+    while mouseY > 16 do
+        myY = myY + 1
+        mouseY = mouseY - 32
+    end
+    return myX - 1, myY - 1
+end
+
+function PlayState:isMouseOnBoard()
+    xP, yP = self:getMouseXY()
+    if xP < 0 or xP > 7 then
+        return false
+    end
+    if yP < 0 or yP > 7 then
+        return false
+    end
+    return true
 end
