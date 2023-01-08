@@ -70,7 +70,7 @@ function PlayState:enter(params)
     self.score = params.score or 0
 
     -- score we have to reach to get to the next level
-    self.scoreGoal = self.level * 1.25 * 100000
+    self.scoreGoal = self.level * 1.25 * 1000
 end
 
 function PlayState:update(dt)
