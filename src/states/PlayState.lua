@@ -39,6 +39,9 @@ function PlayState:init()
     self.score = 0
     self.timer = 60
 
+    self.resetting = false
+    self.resettingTimer = 3
+
     -- set our Timer class to turn cursor highlight on and off
     Timer.every(0.5, function()
         self.rectHighlighted = not self.rectHighlighted
@@ -67,7 +70,7 @@ function PlayState:enter(params)
     self.score = params.score or 0
 
     -- score we have to reach to get to the next level
-    self.scoreGoal = self.level * 1.25 * 1000
+    self.scoreGoal = self.level * 1.25 * 100000
 end
 
 function PlayState:update(dt)
@@ -216,11 +219,21 @@ function PlayState:calculateMatches()
             -- recursively call function in case new matches have been created
             -- as a result of falling blocks once new blocks have finished falling
             self:calculateMatches()
-            Timer.after(0.25, function()
-                if not self.board:availableMoves() then
-                    self.board:initializeTiles()
+            if not self.board:availableMoves() then
+                if self.resetting == false then
+                    self.canInput = false
+                    self.resetting = true
+                    Timer.every(1, function()
+                        self.resettingTimer = self.resettingTimer - 1
+                        if self.resettingTimer <= 0 then
+                            self.resettingTimer = 3
+                            self.canInput = true
+                            self.resetting = false
+                            self.board:initializeTiles()
+                        end
+                    end):limit(3)
                 end
-            end)
+            end
         end)
         return true
     -- if no matches, we can continue playing
@@ -270,4 +283,14 @@ function PlayState:render()
     love.graphics.printf('Score: ' .. tostring(self.score), 20, 52, 182, 'center')
     love.graphics.printf('Goal : ' .. tostring(self.scoreGoal), 20, 80, 182, 'center')
     love.graphics.printf('Timer: ' .. tostring(self.timer), 20, 108, 182, 'center')
+    if self.resetting then
+        love.graphics.setColor(95/255, 205/255, 228/255, 200/255)
+        love.graphics.rectangle('fill', 276, 86, 186, 116, 8, 8)
+        love.graphics.setColor(0,0,1,1)
+        love.graphics.printf('No Available', 280, 94, 182, 'center')
+        love.graphics.printf('Moves', 280, 122, 182, 'center')
+        love.graphics.printf('switching in:', 280, 150, 182, 'center')
+        love.graphics.setColor(1,0,0,1)
+        love.graphics.printf('' .. tostring(self.resettingTimer), 280, 178, 182, 'center')
+    end
 end

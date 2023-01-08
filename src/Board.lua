@@ -301,7 +301,6 @@ function Board:availableMoves()
             if x <= 7 then
                 switchTile = self.tiles[y][x+1]
                 if self:matchOccursBetween(currTile, switchTile) then
-                    --currTile.variety = 3
                     return true
                 end
             end
@@ -309,7 +308,6 @@ function Board:availableMoves()
             if y <= 7 then
                 switchTile = self.tiles[y+1][x]
                 if self:matchOccursBetween(currTile, switchTile) then
-                    --currTile.variety = 5
                     return true
                 end
             end
@@ -328,7 +326,7 @@ function Board:matchOccursBetween(tile1, tile2)
         return true
     end
     
-    self:swap(currTile,switchTile)
+    self:swap(tile1, tile2)
     return false
 end
 
