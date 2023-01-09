@@ -28,7 +28,7 @@ function BeginGameState:enter(def)
     -- grab level # from the def we're passed
     self.level = def.level
 
-    -- spawn a board and place it toward the right
+    -- spawn a board and place it toward the right, level used to determine variation of tiles
     self.board = Board(VIRTUAL_WIDTH - 272, 16, self.level)
 
     --

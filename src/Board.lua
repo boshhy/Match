@@ -37,6 +37,7 @@ function Board:initializeTiles()
         end
     end
 
+    -- If matches happen or no moves are available reset the board before starting game
     while self:calculateMatches() or not self:availableMoves() do
         
         -- recursively initialize if matches were returned so we always have
@@ -79,6 +80,7 @@ function Board:calculateMatches()
 
                     -- go backwards from here by matchNum
                     for x2 = x - 1, x - matchNum, -1 do
+                        -- if shiny occurs i a horizontal match clear the table and add the whole row
                         if self.tiles[y][x2].shinybool then
                             match = {}
                             for x3 = 1, 8 do
@@ -110,6 +112,7 @@ function Board:calculateMatches()
             
             -- go backwards from end of last row by matchNum
             for x = 8, 8 - matchNum + 1, -1 do
+                -- if shiny occurs i a horizontal match clear the table and add the whole row
                 if self.tiles[y][x].shinybool then
                     match = {}
                     for x3 = 1, 8 do
@@ -142,6 +145,7 @@ function Board:calculateMatches()
                     local match = {}
 
                     for y2 = y - 1, y - matchNum, -1 do
+                        -- if a shiny tile occurs in the match then add the whole row of shiny to table
                         if self.tiles[y2][x].shinybool then
                             for x3 = 1, 8 do
                                 table.insert(match,self.tiles[y2][x3])
@@ -169,6 +173,7 @@ function Board:calculateMatches()
             
             -- go backwards from end of last row by matchNum
             for y = 8, 8 - matchNum + 1, -1 do
+                -- if a shiny tile occurs in the match then add the whole row of shiny to table
                 if self.tiles[y][x].shinybool then
                     for x3 = 1, 8 do
                         table.insert(match,self.tiles[y][x3])
@@ -292,19 +297,20 @@ function Board:render()
 end
 
 
+-- Check to see if there is any available moves to make
 function Board:availableMoves()
     for x = 1, 8 do
         for y = 1, 8 do
             currTile = self.tiles[y][x]
 
-            -- tile to left
+            -- Switch left and right
             if x <= 7 then
                 switchTile = self.tiles[y][x+1]
                 if self:matchOccursBetween(currTile, switchTile) then
                     return true
                 end
             end
-
+            -- Switch up and down
             if y <= 7 then
                 switchTile = self.tiles[y+1][x]
                 if self:matchOccursBetween(currTile, switchTile) then
@@ -314,10 +320,12 @@ function Board:availableMoves()
 
         end
     end
+    -- if not matches occur return false
     return false
 end
 
 
+-- Swap tiles and see if they occur in a match
 function Board:matchOccursBetween(tile1, tile2)
     self:swap(tile1, tile2)
 
@@ -331,6 +339,7 @@ function Board:matchOccursBetween(tile1, tile2)
 end
 
 
+-- Used to swap two tiles
 function Board:swap(tile1, tile2)
     tempX = tile1.gridX
     tempY = tile1.gridY

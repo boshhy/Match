@@ -79,6 +79,7 @@ function love.load()
     -- initialize input table
     love.keyboard.keysPressed = {}
 
+    -- initialize mouse key input table
     love.mouse.keysPressed = {}
 end
 
@@ -127,11 +128,13 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button, istouch)
-    if button == 1 then -- Versions prior to 0.10.0 use the MouseConstant 'l'
+    -- If button is left click add to keys pressed this frame
+    if button == 1 then
         love.mouse.keysPressed[button] = true
     end
  end
 
+ -- Checks to see if the requested key was pressed this frame
  function love.mouse.wasPressed(button)
     if love.mouse.keysPressed[button] then
         return true

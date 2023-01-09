@@ -39,9 +39,11 @@ function PlayState:init()
     self.score = 0
     self.timer = 60
 
+    -- Used to display resetting message for 3 seconds before reshuffle
     self.resetting = false
     self.resettingTimer = 3
 
+    -- Used for mouse hover when hovering over new tile
     self.oldmX = 0
     self.oldmY = 0
 
@@ -112,6 +114,8 @@ function PlayState:update(dt)
     end
 
     if self.canInput then
+
+        -- If mouse in on the board use mouse instead of keys
         if self:isMouseOnBoard() then
             mX, mY = self:getMouseXY()
             if oldmX ~= mX or oldmY ~= mY then
@@ -138,8 +142,7 @@ function PlayState:update(dt)
             end
         end
 
-        -- if we've pressed enter, to select or deselect a tile...
-        --TODO fix mouse issue being down
+        -- if we've pressed enter or mouse clicked while on board then select or deselect a tile...
         if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return')  or love.mouse.wasPressed(1) and self:isMouseOnBoard() then
             
             -- if same tile as currently highlighted, deselect
@@ -201,7 +204,7 @@ end
     Calculates whether any matches were found on the board and tweens the needed
     tiles to their new destinations if so. Also removes tiles from the board that
     have matched and replaces them with new randomized tiles, deferring most of this
-    to the Board class.
+    to the Board class. Returns true if match found of false if not.
 ]]
 function PlayState:calculateMatches()
     self.highlightedTile = nil
@@ -298,6 +301,7 @@ function PlayState:render()
     love.graphics.printf('Score: ' .. tostring(self.score), 20, 52, 182, 'center')
     love.graphics.printf('Goal : ' .. tostring(self.scoreGoal), 20, 80, 182, 'center')
     love.graphics.printf('Timer: ' .. tostring(self.timer), 20, 108, 182, 'center')
+    -- If the board is resetting display a message (this last for 3 seconds)
     if self.resetting then
         love.graphics.setColor(95/255, 205/255, 228/255, 200/255)
         love.graphics.rectangle('fill', 276, 86, 186, 116, 8, 8)
@@ -311,6 +315,7 @@ function PlayState:render()
 end
 
 
+-- Used to get mouse position on board i.e top-left returns 0,0 whiel bottom-right returns 7,7
 function PlayState:getMouseXY()
     mouseX, mouseY = push:toGame(love.mouse.getPosition())
     myX, myY = 0, 0
@@ -325,6 +330,8 @@ function PlayState:getMouseXY()
     return myX - 1, myY - 1
 end
 
+
+-- Used to determine if mouse is on board
 function PlayState:isMouseOnBoard()
     xP, yP = self:getMouseXY()
     if xP < 0 or xP > 7 then
@@ -336,8 +343,8 @@ function PlayState:isMouseOnBoard()
     return true
 end
 
+-- Used to update oldX and oldY when using the mouse
 function PlayState:updateXY(x, y)
     self.oldmX = x
     self.oldmY = Y
 end
-

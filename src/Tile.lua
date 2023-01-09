@@ -27,10 +27,11 @@ function Tile:init(x, y, color, variety)
     self.color = color
     self.variety = variety
     
-    -- shiny variation of the tile
+    -- shiny variation of a tile
     self.shiny = math.random(8) == 1 and true or false
     self.shinybool = self.shiny
 
+    -- whill be used to draw a 'blinking' effect
     Timer.every(0.25, function()
         if self.shinybool then
             self.shiny = not self.shiny
@@ -50,12 +51,14 @@ function Tile:render(x, y)
     love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
         self.x + x, self.y + y) 
 
+    -- if shiny then draw a star (ellipses) in the top right of tile
     if self.shinybool then
         love.graphics.setColor(174/255,187/255,255/255,1)
         love.graphics.ellipse('fill', self.x + 24 + x, self.y + 8 + y, 1,4)
         love.graphics.ellipse('fill', self.x + 24 + x, self.y + 8 + y, 4,1) 
     end
 
+    -- this alternates bettwn true and false so we draw a 'blinking' effect
     if self.shiny then
         love.graphics.setColor(174/255,187/255,255/255,1)
         love.graphics.ellipse('fill', self.x + 24 + x, self.y + 8 + y, 1,5)
