@@ -140,7 +140,7 @@ function PlayState:update(dt)
 
         -- if we've pressed enter, to select or deselect a tile...
         --TODO fix mouse issue being down
-        if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return')  or love.mouse.isDown(1) and self:isMouseOnBoard() then
+        if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return')  or love.mouse.wasPressed(1) and self:isMouseOnBoard() then
             
             -- if same tile as currently highlighted, deselect
             local x = self.boardHighlightX + 1
@@ -335,3 +335,9 @@ function PlayState:isMouseOnBoard()
     end
     return true
 end
+
+function PlayState:updateXY(x, y)
+    self.oldmX = x
+    self.oldmY = Y
+end
+

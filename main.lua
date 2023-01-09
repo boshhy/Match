@@ -78,6 +78,8 @@ function love.load()
 
     -- initialize input table
     love.keyboard.keysPressed = {}
+
+    love.mouse.keysPressed = {}
 end
 
 function love.resize(w, h)
@@ -111,6 +113,7 @@ function love.update(dt)
     gStateMachine:update(dt)
 
     love.keyboard.keysPressed = {}
+    love.mouse.keysPressed = {}
 end
 
 function love.draw()
@@ -121,4 +124,18 @@ function love.draw()
     
     gStateMachine:render()
     push:finish()
+end
+
+function love.mousepressed(x, y, button, istouch)
+    if button == 1 then -- Versions prior to 0.10.0 use the MouseConstant 'l'
+        love.mouse.keysPressed[button] = true
+    end
+ end
+
+ function love.mouse.wasPressed(button)
+    if love.mouse.keysPressed[button] then
+        return true
+    else
+        return false
+    end
 end
